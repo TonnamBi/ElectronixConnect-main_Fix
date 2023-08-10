@@ -67,30 +67,26 @@ function calculateApplianceBudget() {
     // Calculate the budget allocation, daily electricity consumption, and mean usage hours for each appliance
     usageLevelMap.forEach((usageLevelData, level) => {
       var levelBudget;
-      if (level === 1) {
-        levelBudget = (usageLevelMap.get(3).importance / totalImportance) * totalBudget;
-      } else if (level === 3) {
-        levelBudget = (usageLevelMap.get(1).importance / totalImportance) * totalBudget;
-      } else {
-        levelBudget = (usageLevelData.importance / totalImportance) * totalBudget;
-      }
-
-      var dailyElectricityConsumptionForLevel = (usageLevelData.importance / totalImportance) * controlPrice;
+      var targetLevel = level === 1 ? 3 : (level === 3 ? 1 : level);  
+    
+      levelBudget = (usageLevelMap.get(targetLevel).importance / totalImportance) * totalBudget;
+    
+      var dailyElectricityConsumptionForLevel = (usageLevelMap.get(targetLevel).importance / totalImportance) * controlPrice;
       totalDailyElectricityConsumption += dailyElectricityConsumptionForLevel;
-
+    
       var totalPowerForLevel = 0;
-
+    
       // Calculate the total power consumption for each usage level
       usageLevelData.appliances.forEach((appliance) => {
         totalPowerForLevel += appliance.power;
       });
-
+    
       // Calculate the mean usage hours for each level with the assigned weight
-      var meanUsageHoursForLevel = (usageLevelData.importance / totalImportance) * (totalPowerForLevel / dailyElectricityConsumptionForLevel);
-
+      var meanUsageHoursForLevel = (usageLevelMap.get(targetLevel).importance / totalImportance) * (totalPowerForLevel / dailyElectricityConsumptionForLevel);
+    
       var resultElement = document.createElement("p");
       resultElement.textContent =
-        "Usage Level " + level + " Budget: $" + levelBudget.toFixed(2) +
+        "Usage Level " + targetLevel + " Budget: $" + levelBudget.toFixed(2) +
         " | Daily Electricity Consumption: " + dailyElectricityConsumptionForLevel.toFixed(2) + " units" +
         " | Mean Usage Hours: " + meanUsageHoursForLevel.toFixed(2) + " hours";
       applianceBudgets.appendChild(resultElement);
