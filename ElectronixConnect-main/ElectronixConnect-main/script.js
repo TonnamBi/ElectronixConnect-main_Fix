@@ -76,6 +76,16 @@ function calculateApplianceBudget() {
       }
 
       var dailyElectricityConsumptionForLevel = (usageLevelData.importance / totalImportance) * controlPrice;
+
+      // Change the condition to calculate dailyElectricityConsumptionForLevel for Level 1 based on Level 3
+      if (level === 1) {
+        dailyElectricityConsumptionForLevel = (usageLevelMap.get(3).importance / totalImportance) * controlPrice;
+      }
+      // Change the condition to calculate dailyElectricityConsumptionForLevel for Level 3 based on Level 1
+      else if (level === 3) {
+        dailyElectricityConsumptionForLevel = (usageLevelMap.get(1).importance / totalImportance) * controlPrice;
+      }
+
       totalDailyElectricityConsumption += dailyElectricityConsumptionForLevel;
 
       var totalPowerForLevel = 0;
@@ -85,9 +95,17 @@ function calculateApplianceBudget() {
         totalPowerForLevel += appliance.power;
       });
 
-      // Calculate the mean usage hours for each level with the assigned weight
-      var meanUsageHoursForLevel = (usageLevelData.importance / totalImportance) * (totalPowerForLevel / dailyElectricityConsumptionForLevel);
+      
 
+      var meanUsageHoursForLevel;
+      if (level === 1) {
+        meanUsageHoursForLevel = (usageLevelMap.get(3).importance / totalImportance) * (totalPowerForLevel / dailyElectricityConsumptionForLevel);
+      } else if (level === 3) {
+        meanUsageHoursForLevel = (usageLevelMap.get(1).importance / totalImportance) * (totalPowerForLevel / dailyElectricityConsumptionForLevel);
+      } else {
+        meanUsageHoursForLevel = (usageLevelData.importance / totalImportance) * (totalPowerForLevel / dailyElectricityConsumptionForLevel);
+      }
+  
       var resultElement = document.createElement("p");
       resultElement.textContent =
         "Usage Level " + level + " Budget: $" + levelBudget.toFixed(2) +
@@ -103,7 +121,6 @@ function calculateApplianceBudget() {
     alert("Please enter valid total budget and control price.");
   }
 }
-
 
 function clearAppliances() {
 // Clear the appliance list in the HTML
