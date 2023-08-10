@@ -122,6 +122,8 @@ function calculateApplianceBudget() {
   }
 }
 
+
+
 function clearAppliances() {
 // Clear the appliance list in the HTML
 var applianceList = document.getElementById("appliance-items");
